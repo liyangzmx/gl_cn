@@ -18,6 +18,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
+
 int main(int argc, const char **arg){
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -37,6 +41,8 @@ int main(int argc, const char **arg){
         exit( EXIT_FAILURE);
     }
     glViewport(0, 0, 800, 600);
+
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     exit(EXIT_SUCCESS);
 }
