@@ -29,15 +29,16 @@ set_target_properties(
 include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/../SOIL2/src/SOIL2/
     ${CMAKE_CURRENT_LIST_DIR}/../glad/build/include/
-    ${CMAKE_CURRENT_LIST_DIR}/../stb/
+    # ${CMAKE_CURRENT_LIST_DIR}/../stb/
 )
 
 target_link_libraries(
     HelloWindow
     glfw
     soil
+    GLEW
     GLU
-    glad
+    # glad
     OpenGL::GL
     dl
 )

@@ -1,13 +1,14 @@
-#include <glad/glad.h>
+// #include <glad/glad.h>
+
+// sudo apt install libglew-dev
+#include <GL/glew.h>
+#include "SOIL2.h"
 
 // sudo apt install libgles2-mesa-dev
 // #define GLFW_INCLUDE_ES3
 
 // sudo apt install libglfw3-dev
 #include <GLFW/glfw3.h>
-
-// sudo apt install libglew-dev
-// #include <GL/glew.h>
 
 #include <iostream>
 #include <stack>
@@ -19,7 +20,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+// #include "stb_image.h"
 #include "Shader.h"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
@@ -46,7 +47,11 @@ int main(int argc, const char **arg){
         exit(EXIT_FAILURE);
     }
     glfwMakeContextCurrent(window);
-    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    // if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    //     std::cout << "Failed to initialize GLAD" << std::endl;
+    //     exit( EXIT_FAILURE);
+    // }
+    if(glewInit() != GLEW_OK) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         exit( EXIT_FAILURE);
     }
@@ -92,26 +97,45 @@ int main(int argc, const char **arg){
 
     glBindVertexArray(0);
 
-    unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    std::cout << "Generated texture: " << texture << std::endl;
+    unsigned int textures[2];
+    glGenTextures(2, textures);
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+    std::cout << "Generated texture: " << textures[0] << ", " << textures[1] << std::endl;
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);   
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("../container.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data;
+    // data = stbi_load("../container.jpg", &width, &height, &nrChannels, 0);
+    data = SOIL_load_image("../container.jpg", &width, &height, 0, SOIL_LOAD_RGB);
 
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
-        std::cout << "Success to load texture" << std::endl;
+        std::cout << "Success to load texture(" << width << ", " << height << ")" << std::endl;
     } else {
         std::cout << "Failed to load texture" << std::endl;
     }
-    stbi_image_free(data);
+    // stbi_image_free(data);
+
+    width = 0;
+    height = 0;
+    nrChannels = 0;
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
+    // data = stbi_load("../awesomeface.png", &width, &height, &nrChannels, 0);
+    data = SOIL_load_image("../awesomeface.png", &width, &height, 0, SOIL_LOAD_RGB);
+
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        std::cout << "Success to load texture(" << width << ", " << height << ")" << std::endl;
+    } else {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    // stbi_image_free(data);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     while(!glfwWindowShouldClose(window)) {
@@ -121,8 +145,14 @@ int main(int argc, const char **arg){
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glBindTexture(GL_TEXTURE_2D, texture);
         ourShader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textures[0]);
+        glUniform1i(glGetUniformLocation(ourShader.ID, "ourTexture1"), 0);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, textures[1]);
+        glUniform1i(glGetUniformLocation(ourShader.ID, "ourTexture2"), 1);
+
         glBindVertexArray(VAO);
         // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO[1]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
