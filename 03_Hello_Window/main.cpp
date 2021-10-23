@@ -54,9 +54,9 @@ int main(int argc, const char **arg){
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    Shader ourShader("3.3.shader.vs", "3.3.shader.fs"); 
+    Shader ourShader("../3.3.shader.vs", "../3.3.shader.fs"); 
 
-    float vertices[] = {
+    GLfloat vertices[] = {
     //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
@@ -71,25 +71,25 @@ int main(int argc, const char **arg){
     
     unsigned int VAO, VBO[2];
     glGenVertexArrays(1, &VAO);
+    glGenBuffers(2, VBO);
+    
     glBindVertexArray(VAO);
 
-    glGenBuffers(1, VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3* sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
     glBindVertexArray(0);
 
     unsigned int texture;
@@ -102,7 +102,7 @@ int main(int argc, const char **arg){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load("../container.jpg", &width, &height, &nrChannels, 0);
 
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -121,8 +121,8 @@ int main(int argc, const char **arg){
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ourShader.use();
         glBindTexture(GL_TEXTURE_2D, texture);
+        ourShader.use();
         glBindVertexArray(VAO);
         // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO[1]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
