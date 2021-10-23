@@ -44,5 +44,11 @@ int main(int argc, const char **arg){
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    while(!glfwWindowShouldClose(window)) {
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    glfwTerminate();
     exit(EXIT_SUCCESS);
 }
