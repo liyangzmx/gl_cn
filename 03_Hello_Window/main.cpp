@@ -124,20 +124,30 @@ int main(int argc, const char **arg){
     glDeleteShader(fragmentShader);
 
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
+        0.5f, 0.5f, 0.0f,   // 右上角
+        0.5f, -0.5f, 0.0f,  // 右下角
+        -0.5f, -0.5f, 0.0f, // 左下角
+        -0.5f, 0.5f, 0.0f   // 左上角
     };
-    unsigned int VAO, VBO;
+    unsigned int indices[] = { // 注意索引从0开始! 
+        0, 1, 3, // 第一个三角形
+        1, 2, 3  // 第二个三角形
+    };
+    
+    unsigned int VAO, VBO[2];
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glGenBuffers(2, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
+    // EBO
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
-
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
@@ -150,13 +160,17 @@ int main(int argc, const char **arg){
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO[1]);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    glDeleteBuffers(1, &VBO);
-
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(2, VBO);
+    glDeleteProgram(shaderProgram);
     glfwTerminate();
+
     exit(EXIT_SUCCESS);
 }
