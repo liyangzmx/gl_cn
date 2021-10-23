@@ -52,84 +52,7 @@ int main(int argc, const char **arg){
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // Create Shader Program
-    const char *vertexShaderSource = "#version 330 core\n"
-        "layout (location = 0) in vec3 aPos;\n"
-        "layout (location = 1) in vec3 aColor;\n"
-        "out vec3 ourColor; // 向片段着色器输出一个颜色\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-        "   ourColor = aColor; // 将ourColor设置为我们从顶点数据那里得到的输入颜色\n"
-        "}\n\0";
-        
-    const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "in vec3 ourColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(ourColor, 1.0);\n"
-    "}\n\0";
-
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    int success;
-    char *infoLog;
-    int len;
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success) {
-        glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &len);
-        infoLog = (char *) malloc(len);
-        if(NULL == infoLog) {
-            std::cout << "malloc infoLog FAILED!" << std::endl;
-            exit( EXIT_FAILURE);
-        }
-        glGetShaderInfoLog(vertexShader, len, &len, infoLog);
-        std::cout << "ERROR:SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-        free(infoLog);
-        infoLog = NULL;
-    }
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if(!success) {glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &len);
-        infoLog = (char *) malloc(len);
-        if(NULL == infoLog) {
-            std::cout << "malloc infoLog FAILED!" << std::endl;
-            exit( EXIT_FAILURE);
-        }
-        glGetShaderInfoLog(fragmentShader, len, &len, infoLog);
-        std::cout << "ERROR:SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-        free(infoLog);
-        infoLog = NULL;
-    }
-
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &len);
-        infoLog = (char *) malloc(len);
-        if(NULL == infoLog) {
-            std::cout << "malloc infoLog FAILED!" << std::endl;
-            exit( EXIT_FAILURE);
-        }
-        glGetProgramInfoLog(shaderProgram, len, &len, infoLog);
-        std::cout << "ERROR:PROGRAM::LINK_FAILED\n" << infoLog << std::endl;
-        free(infoLog);
-        infoLog = NULL;
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    Shader ourShader("3.3.shader.vs", "3.3.shader.fs"); 
 
     float vertices[] = {
         // 位置              // 颜色
@@ -162,11 +85,9 @@ int main(int argc, const char **arg){
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
+        ourShader.use();
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO);
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
@@ -174,8 +95,7 @@ int main(int argc, const char **arg){
     }
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
-    glfwTerminate();
 
+    glfwTerminate();
     exit(EXIT_SUCCESS);
 }
