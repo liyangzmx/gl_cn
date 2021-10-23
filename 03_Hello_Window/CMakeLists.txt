@@ -21,6 +21,7 @@ set_target_properties(
 
 include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/../glad/build/include/
+    ${CMAKE_CURRENT_LIST_DIR}/../stb/
 )
 
 target_link_libraries(

@@ -18,6 +18,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 #include "Shader.h"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
@@ -59,6 +61,12 @@ int main(int argc, const char **arg){
         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右下
         -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 顶部
+    };
+
+    float texCoords[] = {
+        0.0f, 0.0f, // 左下角
+        1.0f, 0.0f, // 右下角
+        0.5f, 1.0f // 上中
     };
     
     unsigned int VAO, VBO;
