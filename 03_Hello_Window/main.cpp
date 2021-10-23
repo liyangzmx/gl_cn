@@ -23,5 +23,13 @@ int main(int argc, const char **arg){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
+    GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    if(window == NULL) {
+        std::cout << "Failed to create GLFW window" << std::endl;;
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+    glfwMakeContextCurrent(window);
+
     exit(EXIT_SUCCESS);
 }
