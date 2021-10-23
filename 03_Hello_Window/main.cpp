@@ -16,8 +16,8 @@
 #include <fstream>
 #include <cmath>
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 // #include "stb_image.h"
@@ -33,6 +33,9 @@ void processInput(GLFWwindow *window) {
     }
 }
 
+#define WIDTH   800
+#define HEIGHT  600
+
 int main(int argc, const char **arg){
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -40,7 +43,7 @@ int main(int argc, const char **arg){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    GLFWwindow *window = glfwCreateWindow(800, 800, "LearnOpenGL", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", NULL, NULL);
     if(window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;;
         glfwTerminate();
@@ -55,7 +58,7 @@ int main(int argc, const char **arg){
         std::cout << "Failed to initialize GLAD" << std::endl;
         exit( EXIT_FAILURE);
     }
-    glViewport(0, 0, 800, 800);
+    glViewport(0, 0, WIDTH, HEIGHT);
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -153,11 +156,23 @@ int main(int argc, const char **arg){
         glBindTexture(GL_TEXTURE_2D, textures[1]);
         glUniform1i(glGetUniformLocation(ourShader.ID, "ourTexture2"), 1);
 
-        glm::mat4 trans;
-        trans = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, -0.5f, 0.0f));
-        trans = glm::rotate(trans,(GLfloat)glfwGetTime() * 0.5f, glm::vec3(0.0f, 0.0f, 1.0f));
-        GLuint transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+        glm::mat4 model(1.0f);
+        model = glm::rotate(model, (GLfloat)glfwGetTime() * 5.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+        glm::mat4 view(1.0f);
+        // 注意，我们将矩阵向我们要进行移动场景的反向移动。
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+        glm::mat4 projection(1.0f);
+        projection = glm::perspective(45.0f, (GLfloat)WIDTH / HEIGHT, 0.1f, 100.0f);
+
+        GLint modelLoc = glGetUniformLocation(ourShader.ID, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        GLint viewLoc = glGetUniformLocation(ourShader.ID, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        GLint projectLoc = glGetUniformLocation(ourShader.ID, "projection");
+        glUniformMatrix4fv(projectLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
         glBindVertexArray(VAO);
         // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO[1]);
