@@ -40,7 +40,7 @@ int main(int argc, const char **arg){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(800, 800, "LearnOpenGL", NULL, NULL);
     if(window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;;
         glfwTerminate();
@@ -55,7 +55,7 @@ int main(int argc, const char **arg){
         std::cout << "Failed to initialize GLAD" << std::endl;
         exit( EXIT_FAILURE);
     }
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, 800, 800);
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -152,6 +152,12 @@ int main(int argc, const char **arg){
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, textures[1]);
         glUniform1i(glGetUniformLocation(ourShader.ID, "ourTexture2"), 1);
+
+        glm::mat4 trans;
+        trans = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans,(GLfloat)glfwGetTime() * 0.5f, glm::vec3(0.0f, 0.0f, 1.0f));
+        GLuint transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
         glBindVertexArray(VAO);
         // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO[1]);
