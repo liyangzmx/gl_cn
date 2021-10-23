@@ -36,6 +36,7 @@ int main(int argc, const char **arg){
         std::cout << "Failed to initialize GLAD" << std::endl;
         exit( EXIT_FAILURE);
     }
+    glViewport(0, 0, 800, 600);
 
     exit(EXIT_SUCCESS);
 }
