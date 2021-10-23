@@ -1,3 +1,5 @@
+#include <glad/glad.h>
+
 // sudo apt install libgles2-mesa-dev
 // #define GLFW_INCLUDE_ES3
 
@@ -30,6 +32,10 @@ int main(int argc, const char **arg){
         exit(EXIT_FAILURE);
     }
     glfwMakeContextCurrent(window);
+    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        exit( EXIT_FAILURE);
+    }
 
     exit(EXIT_SUCCESS);
 }

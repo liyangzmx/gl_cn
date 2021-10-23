@@ -12,9 +12,22 @@ include(CPack)
 
 find_package(OpenGL REQUIRED)
 
+add_library(glad STATIC IMPORTED)
+set_target_properties(
+        glad
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_CURRENT_LIST_DIR}/../glad/build/libglad.a
+)
+
+include_directories(
+    ${CMAKE_CURRENT_LIST_DIR}/../glad/build/include/
+)
+
 target_link_libraries(
     HelloWindow
     glfw
     GLU
+    glad
     OpenGL::GL
+    dl
 )
