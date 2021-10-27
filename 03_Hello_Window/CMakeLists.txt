@@ -10,8 +10,6 @@ set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
 
-find_package(OpenGL REQUIRED)
-
 add_library(glad STATIC IMPORTED)
 set_target_properties(
         glad
@@ -39,6 +37,6 @@ target_link_libraries(
     GLEW
     GLU
     # glad
-    OpenGL::GL
+    GL
     dl
 )
